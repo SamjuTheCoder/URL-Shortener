@@ -57,10 +57,10 @@ This diagram shows how a long URL is converted to a short URL, stored, and resol
 ![URL Shortener Flow](images/component-diagram.png)
 
 ### Create Url Diagram
-![URL Shortener Flow](images/create-url-diagram.png)
+![URL Shortener Flow](images/create-url-sequence.png)
 
 ### Redirect Diagram
-![URL Shortener Flow](images/redirect-diagram.png)
+![URL Shortener Flow](images/redirect-sequence.png)
 
 
 ## Assumptions
