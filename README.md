@@ -49,7 +49,6 @@ Create a clean, scalable microservice that:
 
 ## URL Architecture Diagram
 
-This diagram shows how a long URL is converted to a short URL, stored, and resolved:
 ### Class Diagram
 ![URL Shortener Flow](images/class-diagram.png)
 
