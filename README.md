@@ -164,6 +164,8 @@ The application follows SOLID principles to ensure maintainable, scalable, and t
 
 ### Quick Start
 
+git clone https://github.com/SamjuTheCoder/URL-Shortener.git
+
 # Build the project
 ./mvnw clean package
 
