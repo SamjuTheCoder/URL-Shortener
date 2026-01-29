@@ -57,7 +57,7 @@ Create a clean, scalable microservice that:
 
 ### Quick Start
 
-```bash
+
 # Clone the repository
 git clone <repository-url>
 cd url-shortener
