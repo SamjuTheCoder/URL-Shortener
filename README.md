@@ -80,7 +80,6 @@ Diagrams build with https://plantuml.com/
 ### Service Characteristics
 - **Stateless Design**: Each request contains all necessary information
 - **URL Validation**: Basic regex validation for URL format and length constraints
-- **Scheduled Cleanup**: Expired URLs are automatically cleaned up daily
 
 ## Observability & Metrics
 
