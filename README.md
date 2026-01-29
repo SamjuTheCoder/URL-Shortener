@@ -2,7 +2,7 @@
 
 A production-ready, RESTful URL shortening service built with Spring Boot. This microservice converts long URLs into short, manageable codes and provides redirection, analytics, and management capabilities.
 
-## 🎯 Project Goal
+## Project Goal
 
 Create a clean, scalable microservice that:
 - Converts long URLs into short codes
@@ -13,27 +13,27 @@ Create a clean, scalable microservice that:
 - Supports monitoring and observability
 - Can be containerized for easy deployment
 
-## 🚀 Features
+## Features
 
 ### Core Features
-- ✅ **URL Shortening**: Convert long URLs to 6-character short codes
-- ✅ **Redirection**: HTTP 302 redirects to original URLs
-- ✅ **Idempotent Operations**: Same URL returns same short code
-- ✅ **Expiration Support**: URLs expire after configurable time
-- ✅ **Analytics**: Track click counts and access timestamps
-- ✅ **Validation**: URL format and length validation
-- ✅ **Collision Handling**: Automatic retry on code collisions
+- **URL Shortening**: Convert long URLs to 6-character short codes
+- **Redirection**: HTTP 302 redirects to original URLs
+- **Idempotent Operations**: Same URL returns same short code
+- **Expiration Support**: URLs expire after configurable time
+- **Analytics**: Track click counts and access timestamps
+- **Validation**: URL format and length validation
+- **Collision Handling**: Automatic retry on code collisions
 
 ### Advanced Features
-- ✅ **Rate Limiting**: Protect against abuse (10 requests/minute)
-- ✅ **Monitoring**: Spring Boot Actuator with custom metrics
-- ✅ **API Documentation**: OpenAPI 3 with Swagger UI
-- ✅ **Container Support**: Docker and Docker Compose
-- ✅ **Database Options**: H2 (dev) and PostgreSQL (prod)
-- ✅ **Error Handling**: RFC 7807 Problem Details
-- ✅ **Scheduled Cleanup**: Automatic removal of expired URLs
+- **Rate Limiting**: Protect against abuse (10 requests/minute)
+- **Monitoring**: Spring Boot Actuator with custom metrics
+- **API Documentation**: OpenAPI 3 with Swagger UI
+- **Container Support**: Docker and Docker Compose
+- **Database Options**: H2 (dev) and PostgreSQL (prod)
+- **Error Handling**: RFC 7807 Problem Details
+- **Scheduled Cleanup**: Automatic removal of expired URLs
 
-## 🛠️ Tech Stack
+## Tech Stack
 
 - **Java 17** - Programming language
 - **Spring Boot 3.1.5** - Framework
@@ -47,7 +47,7 @@ Create a clean, scalable microservice that:
 - **Testcontainers** - Integration testing
 - **Docker** - Containerization
 
-## 🤔 Assumptions
+## Assumptions
 
 ### Code Generation & Collision Handling
 - **Base62 Encoding**: Codes are alphanumeric strings (A-Z, a-z, 0-9) generated randomly
@@ -67,7 +67,7 @@ Create a clean, scalable microservice that:
 - **URL Validation**: Basic regex validation for URL format and length constraints
 - **Scheduled Cleanup**: Expired URLs are automatically cleaned up daily
 
-## 📈 Observability & Metrics
+## Observability & Metrics
 
 ### Spring Boot Actuator Endpoints
 - **Health Checks**: `GET /actuator/health` - Application and database health status
@@ -129,6 +129,40 @@ Create a clean, scalable microservice that:
 | **In-memory Rate Limiting** | Simple implementation, no external dependencies | Doesn't scale horizontally; per-instance limits only |
 | **Synchronous Processing** | Simpler error handling and debugging | Lower throughput compared to asynchronous processing |
 | **Database Indexes** | Optimized queries for common operations | Increased storage and slower writes |
+
+
+## Architecture & Design Principles
+
+### SOLID Principles Compliance
+
+The application follows SOLID principles to ensure maintainable, scalable, and testable code:
+
+#### **S – Single Responsibility Principle (SRP)**
+*A class should have one, and only one, reason to change.*
+
+| Class | Responsibility | Why It Follows SRP |
+|-------|---------------|-------------------|
+| `UrlMappingService` | Business logic (create, resolve, metadata) | Only handles URL shortening business rules |
+| `UrlMappingController` | HTTP request handling for API endpoints | Only manages HTTP communication for `/api/urls` |
+| `UrlRedirectController` | HTTP redirect handling | Only manages redirect responses for `/r/{code}` |
+| `UrlCodeGenerator` | Short code generation | Only generates unique short codes |
+| `UrlMappingRepository` | Data persistence operations | Only handles database CRUD operations |
+
+**Result**: Each class has a single, well-defined responsibility with no mixed concerns.
+
+#### **O – Open/Closed Principle (OCP)**
+*Classes should be open for extension but closed for modification.*
+
+**Examples in the project:**
+- **Extensible Code Generation**: You could create `Base36CodeGenerator` or `HashBasedCodeGenerator` extending/implementing a `UrlCodeGenerator` interface without modifying `UrlMappingService`
+- **Pluggable Metrics**: New metrics can be added by extending `MeterRegistry` without changing service logic
+- **Flexible Storage**: Different `UrlMappingRepository` implementations could be swapped without modifying business logic
+
+**Design Patterns Used:**
+- Strategy Pattern for code generation
+- Template Method for common service operations
+- Observer Pattern for event handling (metrics, logging)
+
 
 ## 🚦 Build & Run Instructions
 
