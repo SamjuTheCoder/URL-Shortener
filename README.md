@@ -47,6 +47,88 @@ Create a clean, scalable microservice that:
 - **Testcontainers** - Integration testing
 - **Docker** - Containerization
 
+## 🤔 Assumptions
+
+### Code Generation & Collision Handling
+- **Base62 Encoding**: Codes are alphanumeric strings (A-Z, a-z, 0-9) generated randomly
+- **Collision Resolution**: Automatic retry mechanism generates new codes until a unique one is found
+- **Length**: Default 6-character codes (approximately 56 billion possible combinations)
+
+### Data Model & Behavior
+- **Expiration Support**: Optional expiry dates are supported (`expiresAt` field is nullable)
+- **Hit Counting**: Access counters (`hitCount`) increment automatically on each redirect
+- **Database Flexibility**: 
+  - Default: H2 in-memory database for development
+  - Production-ready: PostgreSQL supported via configuration changes
+- **Idempotency**: Creating the same long URL returns the existing short code
+
+### Service Characteristics
+- **Stateless Design**: Each request contains all necessary information
+- **URL Validation**: Basic regex validation for URL format and length constraints
+- **Scheduled Cleanup**: Expired URLs are automatically cleaned up daily
+
+## 📈 Observability & Metrics
+
+### Spring Boot Actuator Endpoints
+- **Health Checks**: `GET /actuator/health` - Application and database health status
+- **Metrics**: `GET /actuator/metrics` - Comprehensive application metrics
+- **Prometheus**: `GET /actuator/prometheus` - Metrics in Prometheus format
+- **Info**: `GET /actuator/info` - Application information and build details
+
+### Custom Metrics
+| Metric Name | Type | Description |
+|------------|------|-------------|
+| `shortener.redirect.total` | Counter | Total number of successful URL redirects |
+| `http.server.requests` | Timer | HTTP request latency and count (auto-configured) |
+| `jvm.*` | Various | JVM memory, threads, and GC metrics (auto-configured) |
+| `hikaricp.connections.*` | Various | Database connection pool metrics |
+
+### Monitoring Integration
+- **Prometheus/Grafana**: Ready for integration via `/actuator/prometheus` endpoint
+- **Health Checks**: Suitable for Kubernetes liveness/readiness probes
+- **Logging**: Structured logging with Spring Boot defaults
+- **H2 Console**: Accessible at `/h2-console` for database inspection (development only)
+
+## ⚖️ Trade-offs & Design Decisions
+
+### Persistence Layer
+| Decision | Rationale | Trade-off |
+|----------|-----------|-----------|
+| **H2 In-memory Database** | Simplified setup, zero configuration for development | Data loss on server restart; not suitable for production |
+| **JPA/Hibernate ORM** | Rapid development, type safety, automatic schema management | Potential performance overhead vs raw SQL; learning curve |
+| **Automatic Schema Updates** | Easy prototyping with `spring.jpa.hibernate.ddl-auto=update` | Risk of data corruption in production; manual migrations preferred for production |
+
+### Business Logic
+| Decision | Rationale | Trade-off |
+|----------|-----------|-----------|
+| **Random Code Generation** | Unpredictable URLs, better security | Potential collisions requiring retry logic |
+| **Simple Collision Retry** | Easy to implement and understand | Not guaranteed minimal retries under extreme load |
+| **Idempotent URL Creation** | Prevents duplicate entries, efficient storage | Slightly slower first-time lookup for existing URLs |
+| **Scheduled Cleanup** | Batch processing reduces database load | Temporary storage of expired URLs until cleanup runs |
+
+### API & Security
+| Decision | Rationale | Trade-off |
+|----------|-----------|-----------|
+| **No Authentication** | Simplified demonstration, easier testing | Not suitable for production without additional security |
+| **Optional Rate Limiting** | Demonstration of pattern without complexity | Production requires distributed rate limiting for scale |
+| **DTO Pattern** | Decouples API from database entities, versioning flexibility | Additional mapping code and classes |
+| **RFC 7807 Error Format** | Standardized error responses, better client handling | More verbose than simple error messages |
+
+### Architecture Patterns
+| Decision | Rationale | Trade-off |
+|----------|-----------|-----------|
+| **Layered Architecture** | Separation of concerns, testability, maintainability | Slight performance overhead from multiple layers |
+| **RESTful Design** | Standard HTTP conventions, predictable API | Some operations don't fit REST perfectly (e.g., redirects) |
+| **Container-first Design** | Easy deployment, consistent environments | Additional complexity for local development setup |
+| **Configuration over Code** | Flexible deployment across environments | Multiple configuration files to manage |
+
+### Performance Considerations
+| Decision | Rationale | Trade-off |
+|----------|-----------|-----------|
+| **No Caching Layer** | Simpler implementation, fewer moving parts | Increased database load for frequent redirects |
+| **In-memory Rate Limiting** | Simple implementation, no external dependencies | Doesn't scale horizontally; per-instance limits only |
+| **Synchronous Processing** | Simpler error handling and debugging | Lower throughput compared to asynchronous processing |
+| **Database Indexes** | Optimized queries for common operations | Increased storage and slower writes |
 
 ## 🚦 Build & Run Instructions
 
