@@ -47,19 +47,19 @@ Create a clean, scalable microservice that:
 - **Testcontainers** - Integration testing
 - **Docker** - Containerization
 
-## URL Shortener Flow
+## URL Architecture Diagram
 
 This diagram shows how a long URL is converted to a short URL, stored, and resolved:
-Class Diagram
+### Class Diagram
 ![URL Shortener Flow](images/class-diagram.png)
 
-Component Diagram
+### Component Diagram
 ![URL Shortener Flow](images/component-diagram.png)
 
-Create Url Diagram
+### Create Url Diagram
 ![URL Shortener Flow](images/create-url-diagram.png)
 
-Redirect Diagram
+### Redirect Diagram
 ![URL Shortener Flow](images/redirect-diagram.png)
 
 
