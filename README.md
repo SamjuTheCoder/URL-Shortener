@@ -47,16 +47,6 @@ Create a clean, scalable microservice that:
 - **Testcontainers** - Integration testing
 - **Docker** - Containerization
 
-## 📁 Project Structure
-src/main/java/com/example/urlshortener/
-├── config/ # Configuration classes
-├── controller/ # REST controllers
-├── dto/ # Data Transfer Objects
-├── exception/ # Custom exceptions
-├── model/ # JPA entities
-├── repository/ # Data access layer
-└── service/ # Business logic
-
 
 ## 🚦 Build & Run Instructions
 
@@ -80,3 +70,9 @@ cd url-shortener
 
 # Run the application
 ./mvnw spring-boot:run
+
+## 📊 API Documentation
+
+### Interactive Documentation
+Once the application is running, access:
+- **Swagger UI**: http://localhost:8080/swagger-ui.html
