@@ -47,7 +47,7 @@ Create a clean, scalable microservice that:
 - **Testcontainers** - Integration testing
 - **Docker** - Containerization
 
-## URL Architecture Diagram
+## URL Shortener Architecture Diagram
 
 ### Class Diagram
 ![URL Shortener Flow](images/class-diagram.png)
@@ -87,16 +87,7 @@ Create a clean, scalable microservice that:
 ### Spring Boot Actuator Endpoints
 - **Health Checks**: `GET /actuator/health` - Application and database health status
 - **Metrics**: `GET /actuator/metrics` - Comprehensive application metrics
-- **Prometheus**: `GET /actuator/prometheus` - Metrics in Prometheus format
-- **Info**: `GET /actuator/info` - Application information and build details
-
-### Custom Metrics
-| Metric Name | Type | Description |
-|------------|------|-------------|
-| `shortener.redirect.total` | Counter | Total number of successful URL redirects |
-| `http.server.requests` | Timer | HTTP request latency and count (auto-configured) |
-| `jvm.*` | Various | JVM memory, threads, and GC metrics (auto-configured) |
-| `hikaricp.connections.*` | Various | Database connection pool metrics |
+- **Redirect Counts**: `GET /actuator/metrics/shortener_redirect_total` - Comprehensive shortener redirect total
 
 ### Monitoring Integration
 - **Prometheus/Grafana**: Ready for integration via `/actuator/prometheus` endpoint

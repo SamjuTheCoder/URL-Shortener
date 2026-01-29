@@ -1,5 +1,7 @@
 package com.assessment.urlshortner.controller;
 
+import io.micrometer.core.instrument.Counter;
+import io.micrometer.core.instrument.MeterRegistry;
 import io.swagger.v3.oas.annotations.Operation;
 import io.swagger.v3.oas.annotations.Parameter;
 import io.swagger.v3.oas.annotations.headers.Header;
@@ -32,10 +34,12 @@ public class UrlRedirectController {
 
     // Service layer dependency
     private final UrlMappingService urlService;
+    private final Counter redirectCounter;
 
     // Constructor-based dependency injection
-    public UrlRedirectController(UrlMappingService urlService) {
+    public UrlRedirectController(UrlMappingService urlService, MeterRegistry registry) {
         this.urlService = urlService;
+        this.redirectCounter = registry.counter("shortener_redirect_total");
     }
 
     /**
@@ -94,6 +98,9 @@ public class UrlRedirectController {
 
         // Resolve the short code to its original URL
         String longUrl = urlService.getLongUrl(code);
+
+        // Increment the custom counter every time a redirect occurs
+        redirectCounter.increment();
 
         // Return HTTP 302 Found with Location header
         return ResponseEntity
