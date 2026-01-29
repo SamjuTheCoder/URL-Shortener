@@ -1,70 +1,104 @@
 package com.assessment.urlshortner.controller;
 
-import java.net.URI;
-
+import io.swagger.v3.oas.annotations.Operation;
+import io.swagger.v3.oas.annotations.Parameter;
+import io.swagger.v3.oas.annotations.headers.Header;
+import io.swagger.v3.oas.annotations.media.Content;
+import io.swagger.v3.oas.annotations.media.Schema;
+import io.swagger.v3.oas.annotations.responses.ApiResponse;
+import io.swagger.v3.oas.annotations.responses.ApiResponses;
+import org.springframework.http.HttpHeaders;
 import org.springframework.http.HttpStatus;
+import org.springframework.http.MediaType;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.GetMapping;
 import org.springframework.web.bind.annotation.PathVariable;
+import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RestController;
 
-import com.assessment.urlshortner.model.UrlMapping;
 import com.assessment.urlshortner.service.UrlMappingService;
 
-import io.micrometer.core.instrument.Counter;
-import io.micrometer.core.instrument.MeterRegistry;
-
 /**
- * Controller responsible for resolving short URL codes
- * and redirecting clients to the original long URL.
+ * Author: Julius Fasema
+ * Date: 2026-01-28
+ * Description: Controller responsible for handling short URL
+ *              redirection requests. Resolves a short code
+ *              and redirects clients to the original URL.
  */
 @RestController
+// Base path used for redirection endpoints
+@RequestMapping("/r")
 public class UrlRedirectController {
 
-    // Service handling URL resolution and hit counting
-    private final UrlMappingService urlMappingService;
+    // Service layer dependency
+    private final UrlMappingService urlService;
 
-    // Micrometer counter for tracking redirect events
-    private final Counter redirectCounter;
-
-    /**
-     * Constructor-based dependency injection.
-     *
-     * @param urlMappingService service responsible for resolving short URLs
-     * @param registry Micrometer registry used to register custom metrics
-     */
-    public UrlRedirectController(UrlMappingService urlMappingService, MeterRegistry registry) {
-        this.urlMappingService = urlMappingService;
-
-        // Custom metric exposed via Actuator:
-        // shortener_redirect_total
-        this.redirectCounter = registry.counter("shortener_redirect_total");
+    // Constructor-based dependency injection
+    public UrlRedirectController(UrlMappingService urlService) {
+        this.urlService = urlService;
     }
 
     /**
-     * Resolves a short URL code and redirects to the original long URL.
-     *
+     * Redirects a short URL code to its original long URL.
      * Endpoint: GET /r/{code}
      *
-     * Behaviour:
-     *  - Valid code → HTTP 302 redirect
-     *  - Invalid or expired code → 404 (handled globally)
-     *
-     * @param code short URL identifier
-     * @return HTTP 302 response with Location header set
+     * @param code Short URL code
+     * @return HTTP 302 Found with Location header set
      */
-    @GetMapping("/r/{code}")
-    public ResponseEntity<Void> redirect(@PathVariable String code) {
+    @GetMapping("/{code}")
+    @Operation(
+            summary = "Redirect to original URL",
+            description = "Returns HTTP 302 redirect to the original URL. " +
+                          "This endpoint is intended for browsers or HTTP clients " +
+                          "that automatically follow redirects.",
+            tags = {"Redirect"}
+    )
+    @ApiResponses(value = {
+            @ApiResponse(
+                    responseCode = "302",
+                    description = "Redirect to original URL",
+                    headers = @Header(
+                            name = "Location",
+                            description = "The original long URL",
+                            schema = @Schema(type = "string")
+                    )
+            ),
+            @ApiResponse(
+                    responseCode = "404",
+                    description = "Short URL not found",
+                    content = @Content(
+                            mediaType = MediaType.APPLICATION_PROBLEM_JSON_VALUE,
+                            schema = @Schema(
+                                    implementation = org.springframework.http.ProblemDetail.class
+                            )
+                    )
+            ),
+            @ApiResponse(
+                    responseCode = "410",
+                    description = "Short URL has expired",
+                    content = @Content(
+                            mediaType = MediaType.APPLICATION_PROBLEM_JSON_VALUE,
+                            schema = @Schema(
+                                    implementation = org.springframework.http.ProblemDetail.class
+                            )
+                    )
+            )
+    })
+    public ResponseEntity<Void> redirect(
+            @Parameter(
+                    description = "Short URL code",
+                    example = "samju1234",
+                    required = true
+            )
+            @PathVariable String code) {
 
-        // Resolve the short code to the original URL
-        UrlMapping mapping = urlMappingService.resolve(code);
-
-        // Increment custom redirect counter metric
-        redirectCounter.increment();
+        // Resolve the short code to its original URL
+        String longUrl = urlService.getLongUrl(code);
 
         // Return HTTP 302 Found with Location header
-        return ResponseEntity.status(HttpStatus.FOUND)
-                .location(URI.create(mapping.getLongUrl()))
+        return ResponseEntity
+                .status(HttpStatus.FOUND)
+                .header(HttpHeaders.LOCATION, longUrl)
                 .build();
     }
 }

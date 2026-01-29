@@ -22,7 +22,8 @@ import jakarta.persistence.Table;
     name = "url_mappings",
     indexes = {
         @Index(name = "idx_code", columnList = "code", unique = true),
-        @Index(name = "idx_long_url", columnList = "longUrl")
+        @Index(name = "idx_long_url", columnList = "longUrl"),
+        @Index(name = "idx_expires_at", columnList = "expiresAt")
     }
 )
 public class UrlMapping {
@@ -65,7 +66,20 @@ public class UrlMapping {
      * Number of times the short URL has been successfully resolved.
      */
     @Column(nullable = false)
-    private long hitCount = 0;
+    private long hitCount = 0L;
+
+    // Constructors
+    public UrlMapping() {
+        // Default constructor for JPA
+    }
+
+    public UrlMapping(String code, String longUrl, Instant expiresAt) {
+        this.code = code;
+        this.longUrl = longUrl;
+        this.expiresAt = expiresAt;
+        this.createdAt = Instant.now(); 
+        this.hitCount = 0;
+    }
 
     // --------------------
     // Getters and Setters
@@ -117,6 +131,14 @@ public class UrlMapping {
 
     public void setHitCount(long hitCount) {
         this.hitCount = hitCount;
+    }
+
+    public void incrementHitCount() {
+        this.hitCount++;
+    }
+    
+    public boolean isExpired() {
+        return expiresAt != null && Instant.now().isAfter(expiresAt);
     }
     
 }

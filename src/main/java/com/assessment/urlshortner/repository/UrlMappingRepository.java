@@ -1,8 +1,12 @@
 package com.assessment.urlshortner.repository;
 
+import java.time.Instant;
 import java.util.Optional;
 
 import org.springframework.data.jpa.repository.JpaRepository;
+import org.springframework.data.jpa.repository.Modifying;
+import org.springframework.data.jpa.repository.Query;
+import org.springframework.data.repository.query.Param;
 import org.springframework.stereotype.Repository;
 
 import com.assessment.urlshortner.model.UrlMapping;
@@ -48,5 +52,14 @@ public interface UrlMappingRepository extends JpaRepository<UrlMapping, Long> {
      * @return true if the code already exists, false otherwise
      */
     boolean existsByCode(String code);
+
+    boolean existsByLongUrl(String longUrl);
+    
+    @Query("SELECT COUNT(u) FROM UrlMapping u WHERE u.expiresAt < :now")
+    long countExpiredUrls(@Param("now") Instant now);
+    
+    @Modifying
+    @Query("DELETE FROM UrlMapping u WHERE u.expiresAt < :now")
+    void deleteExpiredUrls(@Param("now") Instant now);
 }
 

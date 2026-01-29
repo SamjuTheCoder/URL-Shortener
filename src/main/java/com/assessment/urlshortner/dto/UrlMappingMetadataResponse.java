@@ -3,57 +3,89 @@ package com.assessment.urlshortner.dto;
 import java.time.Instant;
 
 /**
- * Response DTO for URL metadata endpoint.
- * Returned by GET /api/urls/{code}
+ * Author: Julius Fasema
+ * Date: 2026-01-28
+ * Description: DTO used to return URL metadata information
+ *              for the URL shortening service.
+ *              Returned by GET /api/urls/{code}
  */
 public class UrlMappingMetadataResponse {
 
-    // Short code (e.g. abc123)
+    // Shortened URL code
     private String code;
 
     // Original long URL
     private String longUrl;
 
-    // When the short URL was created
+    // Fully qualified short URL
+    private String shortUrl;
+
+    // Date the URL was created
     private Instant createdAt;
 
-    // Optional expiration timestamp
+    // Date the URL expires
     private Instant expiresAt;
 
-    // Number of times the short URL was accessed
-    private long hitCount;
+    // Number of times the URL has been accessed
+    private Long hitCount;
 
-    public UrlMappingMetadataResponse(
-            String code,
-            String longUrl,
-            Instant createdAt,
-            Instant expiresAt,
-            long hitCount
-    ) {
-        this.code = code;
-        this.longUrl = longUrl;
-        this.createdAt = createdAt;
-        this.expiresAt = expiresAt;
-        this.hitCount = hitCount;
+    // Indicates whether the URL is expired
+    private boolean expired;
+
+    // Getters and Setters
+    public String getCode() { 
+        return code; 
     }
 
-    public String getCode() {
-        return code;
+    public void setCode(String code) { 
+        this.code = code; 
     }
 
-    public String getLongUrl() {
-        return longUrl;
+    public String getLongUrl() { 
+        return longUrl; 
     }
 
-    public Instant getCreatedAt() {
-        return createdAt;
+    public void setLongUrl(String longUrl) { 
+        this.longUrl = longUrl; 
     }
 
-    public Instant getExpiresAt() {
-        return expiresAt;
+    public String getShortUrl() { 
+        return shortUrl; 
     }
 
-    public long getHitCount() {
-        return hitCount;
+    public void setShortUrl(String shortUrl) { 
+        this.shortUrl = shortUrl; 
+    }
+
+    public Instant getCreatedAt() { 
+        return createdAt; 
+    }
+
+    public void setCreatedAt(Instant createdAt) { 
+        this.createdAt = createdAt; 
+    }
+
+    public Instant getExpiresAt() { 
+        return expiresAt; 
+    }
+
+    public void setExpiresAt(Instant expiresAt) { 
+        this.expiresAt = expiresAt; 
+    }
+
+    public Long getHitCount() { 
+        return hitCount; 
+    }
+
+    public void setHitCount(Long hitCount) { 
+        this.hitCount = hitCount; 
+    }
+
+    public boolean isExpired() { 
+        return expired; 
+    }
+
+    public void setExpired(boolean expired) { 
+        this.expired = expired; 
     }
 }

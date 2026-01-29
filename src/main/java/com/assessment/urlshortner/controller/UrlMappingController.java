@@ -1,96 +1,123 @@
 package com.assessment.urlshortner.controller;
 
+import io.swagger.v3.oas.annotations.Operation;
+import io.swagger.v3.oas.annotations.Parameter;
+import io.swagger.v3.oas.annotations.media.Content;
+import io.swagger.v3.oas.annotations.media.Schema;
+import io.swagger.v3.oas.annotations.responses.ApiResponse;
+import io.swagger.v3.oas.annotations.responses.ApiResponses;
+import io.swagger.v3.oas.annotations.tags.Tag;
+import jakarta.validation.Valid;
+import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
-import org.springframework.web.bind.annotation.GetMapping;
-import org.springframework.web.bind.annotation.PathVariable;
-import org.springframework.web.bind.annotation.PostMapping;
-import org.springframework.web.bind.annotation.RequestBody;
-import org.springframework.web.bind.annotation.RequestMapping;
-import org.springframework.web.bind.annotation.RestController;
+import org.springframework.web.bind.annotation.*;
 
-import com.assessment.urlshortner.dto.CreateUrlMappingRequest;
-import com.assessment.urlshortner.dto.CreateUrlMappingResponse;
 import com.assessment.urlshortner.dto.UrlMappingMetadataResponse;
-import com.assessment.urlshortner.model.UrlMapping;
+import com.assessment.urlshortner.dto.UrlMappingRequest;
+import com.assessment.urlshortner.dto.UrlMappingResponse;
 import com.assessment.urlshortner.service.UrlMappingService;
 
-import jakarta.servlet.http.HttpServletRequest;
-import jakarta.validation.Valid;
+import java.net.URL;
 
 /**
- * REST controller responsible for managing URL shortening operations.
- *
- * Exposes endpoints to:
- *  - Create a short URL
- *  - Retrieve metadata about a short URL
+ * Author: Julius Fasema
+ * Date: 2026-01-28
+ * Description: REST controller responsible for handling
+ *              URL shortening requests and metadata retrieval.
  */
 @RestController
 @RequestMapping("/api/urls")
+@Tag(name = "URL Shortener", description = "URL Shortener API")
 public class UrlMappingController {
 
-    // Service layer handling business logic
     private final UrlMappingService urlMappingService;
 
-    /**
-     * Constructor-based dependency injection.
-     * Spring automatically injects the UrlMappingService bean.
-     */
     public UrlMappingController(UrlMappingService urlMappingService) {
         this.urlMappingService = urlMappingService;
     }
 
-    /**
-     * Creates a new short URL for a given long URL.
-     *
-     * Endpoint: POST /api/urls
-     * Request body is validated using Jakarta Bean Validation.
-     *
-     * @param request incoming request containing the long URL
-     * @param http HttpServletRequest used to construct the base URL dynamically
-     * @return short code and fully-qualified short URL
-     */
     @PostMapping
-    public ResponseEntity<CreateUrlMappingResponse> create(
-            @Valid @RequestBody CreateUrlMappingRequest request,
-            HttpServletRequest http
-    ) {
-        // Delegate creation logic to service layer
-        UrlMapping mapping = urlMappingService.create(request.longUrl());
+    @Operation(
+            summary = "Create a short URL",
+            description = "Creates a shortened version of a long URL"
+    )
+    @ApiResponses(value = {
+            @ApiResponse(
+                    responseCode = "201",
+                    description = "Short URL created successfully",
+                    content = @Content(schema = @Schema(implementation = UrlMappingResponse.class))
+            ),
+            @ApiResponse(
+                    responseCode = "400",
+                    description = "Invalid input - URL format is incorrect"
+            ),
+            @ApiResponse(
+                    responseCode = "429",
+                    description = "Too many requests - rate limit exceeded"
+            )
+    })
+    public ResponseEntity<UrlMappingResponse> createShortUrl(
+            @Valid @RequestBody UrlMappingRequest request) {
 
-        // Dynamically build the base URL (scheme + host + port)
-        String baseUrl = http.getScheme() + "://" +
-                http.getServerName() + ":" +
-                http.getServerPort();
+        // Validate empty or null URL
+        if (request.getLongUrl() == null || request.getLongUrl().isBlank()) {
+            return ResponseEntity.badRequest().build();
+        }
 
-        // Return response DTO (not entity) to keep API decoupled
-        return ResponseEntity.ok(
-                new CreateUrlMappingResponse(
-                        mapping.getCode(),
-                        baseUrl + "/r/" + mapping.getCode()
-                )
-        );
+        // Validate URL format
+        if (!isValidUrl(request.getLongUrl())) {
+            return ResponseEntity.badRequest().build();
+        }
+
+        // Delegate to service layer
+        UrlMappingResponse response = urlMappingService.createShortUrl(request);
+
+        return ResponseEntity
+                .status(HttpStatus.CREATED)
+                .body(response);
+    }
+
+    @GetMapping("/{code}")
+    @Operation(
+            summary = "Get URL metadata",
+            description = "Retrieves metadata for a given short URL code"
+    )
+    @ApiResponses(value = {
+            @ApiResponse(
+                    responseCode = "200",
+                    description = "URL metadata retrieved successfully",
+                    content = @Content(schema = @Schema(implementation = UrlMappingMetadataResponse.class))
+            ),
+            @ApiResponse(
+                    responseCode = "404",
+                    description = "Short URL not found - invalid or expired code"
+            )
+    })
+    public ResponseEntity<UrlMappingMetadataResponse> getUrlMetadata(
+            @Parameter(
+                    description = "Short URL code - the unique identifier after the domain",
+                    example = "samju1234"
+            )
+            @PathVariable String code) {
+
+        UrlMappingMetadataResponse metadata =
+                urlMappingService.getUrlMetadata(code);
+
+        return ResponseEntity.ok(metadata);
     }
 
     /**
-     * Retrieves metadata for a short URL without redirecting.
-     *
-     * Endpoint: GET /api/urls/{code}
-     *
-     * @param code short URL identifier
-     * @return metadata including creation time and hit count
+     * Simple URL format validation using java.net.URL
      */
-    @GetMapping("/{code}")
-    public UrlMappingMetadataResponse metadata(@PathVariable String code) {
-        // Fetch metadata from service layer
-        UrlMapping m = urlMappingService.getMetadata(code);
-
-        // Map entity to response DTO
-        return new UrlMappingMetadataResponse(
-                m.getCode(),
-                m.getLongUrl(),
-                m.getCreatedAt(),
-                m.getExpiresAt(),
-                m.getHitCount()
-        );
+    private boolean isValidUrl(String url) {
+        try {
+            if (url == null || url.isBlank()) return false;
+            URL u = new URL(url);
+            String protocol = u.getProtocol();
+            return protocol.equals("http") || protocol.equals("https") || protocol.equals("ftp");
+        } catch (Exception e) {
+            return false;
+        }
     }
+    
 }
