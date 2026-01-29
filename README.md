@@ -90,8 +90,6 @@ Create a clean, scalable microservice that:
 - **Redirect Counts**: `GET /actuator/metrics/shortener_redirect_total` - Comprehensive shortener redirect total
 
 ### Monitoring Integration
-- **Prometheus/Grafana**: Ready for integration via `/actuator/prometheus` endpoint
-- **Health Checks**: Suitable for Kubernetes liveness/readiness probes
 - **Logging**: Structured logging with Spring Boot defaults
 - **H2 Console**: Accessible at `/h2-console` for database inspection (development only)
 
@@ -143,9 +141,6 @@ Create a clean, scalable microservice that:
 
 The application follows SOLID principles to ensure maintainable, scalable, and testable code:
 
-#### **S – Single Responsibility Principle (SRP)**
-*A class should have one, and only one, reason to change.*
-
 | Class | Responsibility | Why It Follows SRP |
 |-------|---------------|-------------------|
 | `UrlMappingService` | Business logic (create, resolve, metadata) | Only handles URL shortening business rules |
@@ -154,17 +149,8 @@ The application follows SOLID principles to ensure maintainable, scalable, and t
 | `UrlCodeGenerator` | Short code generation | Only generates unique short codes |
 | `UrlMappingRepository` | Data persistence operations | Only handles database CRUD operations |
 
-**Result**: Each class has a single, well-defined responsibility with no mixed concerns.
-
-#### **O – Open/Closed Principle (OCP)**
-*Classes should be open for extension but closed for modification.*
-
-**Examples in the project:**
-- **Extensible Code Generation**: You could create `Base36CodeGenerator` or `HashBasedCodeGenerator` extending/implementing a `UrlCodeGenerator` interface without modifying `UrlMappingService`
-- **Pluggable Metrics**: New metrics can be added by extending `MeterRegistry` without changing service logic
-- **Flexible Storage**: Different `UrlMappingRepository` implementations could be swapped without modifying business logic
-
 **Design Patterns Used:**
+- Repository pattern
 - Strategy Pattern for code generation
 - Template Method for common service operations
 - Observer Pattern for event handling (metrics, logging)
@@ -187,6 +173,9 @@ The application follows SOLID principles to ensure maintainable, scalable, and t
 
 # Run the application
 ./mvnw spring-boot:run
+
+# Run the application without test
+./mvnw spring-boot:run -DskipTests
 
 ## API Documentation
 
