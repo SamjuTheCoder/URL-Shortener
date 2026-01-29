@@ -89,7 +89,7 @@ Create a clean, scalable microservice that:
 - **Logging**: Structured logging with Spring Boot defaults
 - **H2 Console**: Accessible at `/h2-console` for database inspection (development only)
 
-## ⚖️ Trade-offs & Design Decisions
+## Trade-offs & Design Decisions
 
 ### Persistence Layer
 | Decision | Rationale | Trade-off |
@@ -164,7 +164,7 @@ The application follows SOLID principles to ensure maintainable, scalable, and t
 - Observer Pattern for event handling (metrics, logging)
 
 
-## 🚦 Build & Run Instructions
+## Build & Run Instructions
 
 ### Prerequisites
 - Java 17 or higher
@@ -187,7 +187,7 @@ cd url-shortener
 # Run the application
 ./mvnw spring-boot:run
 
-## 📊 API Documentation
+## API Documentation
 
 ### Interactive Documentation
 Once the application is running, access:
