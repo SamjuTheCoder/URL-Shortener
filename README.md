@@ -173,11 +173,6 @@ The application follows SOLID principles to ensure maintainable, scalable, and t
 
 ### Quick Start
 
-
-# Clone the repository
-git clone <repository-url>
-cd url-shortener
-
 # Build the project
 ./mvnw clean package
 
