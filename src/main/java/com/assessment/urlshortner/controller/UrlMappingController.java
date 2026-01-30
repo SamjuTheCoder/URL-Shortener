@@ -7,6 +7,7 @@ import io.swagger.v3.oas.annotations.media.Schema;
 import io.swagger.v3.oas.annotations.responses.ApiResponse;
 import io.swagger.v3.oas.annotations.responses.ApiResponses;
 import io.swagger.v3.oas.annotations.tags.Tag;
+import jakarta.servlet.http.HttpServletRequest;
 import jakarta.validation.Valid;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
@@ -18,6 +19,9 @@ import com.assessment.urlshortner.dto.UrlMappingResponse;
 import com.assessment.urlshortner.service.UrlMappingService;
 
 import java.net.URL;
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
+
 
 /**
  * Author: Julius Fasema
@@ -29,6 +33,8 @@ import java.net.URL;
 @RequestMapping("/api/urls")
 @Tag(name = "URL Shortener", description = "URL Shortener API")
 public class UrlMappingController {
+
+    private static final Logger logger = LoggerFactory.getLogger(UrlMappingController.class);
 
     private final UrlMappingService urlMappingService;
 
@@ -57,7 +63,7 @@ public class UrlMappingController {
             )
     })
     public ResponseEntity<UrlMappingResponse> createShortUrl(
-            @Valid @RequestBody UrlMappingRequest request) {
+            @Valid @RequestBody UrlMappingRequest request, HttpServletRequest http) {
 
         // Validate empty or null URL
         if (request.getLongUrl() == null || request.getLongUrl().isBlank()) {
@@ -71,6 +77,10 @@ public class UrlMappingController {
 
         // Delegate to service layer
         UrlMappingResponse response = urlMappingService.createShortUrl(request);
+
+        // Log the creation
+        logger.info("Created short URL for long URL {} from IP {}",
+        request.getLongUrl(), http.getRemoteAddr());
 
         return ResponseEntity
                 .status(HttpStatus.CREATED)

@@ -1,0 +1,32 @@
+2026-01-30T01:12:44.678+01:00  INFO 16764 --- [main] c.a.urlshortner.UrlshortnerApplication   : Starting UrlshortnerApplication using Java 17.0.12 with PID 16764 (/Users/mac/Documents/projects/Mariroso/urlshortner/target/classes started by mac in /Users/mac/Documents/projects/Mariroso/urlshortner)
+2026-01-30T01:12:44.681+01:00  INFO 16764 --- [main] c.a.urlshortner.UrlshortnerApplication   : No active profile set, falling back to 1 default profile: "default"
+2026-01-30T01:12:45.898+01:00  INFO 16764 --- [main] .s.d.r.c.RepositoryConfigurationDelegate : Bootstrapping Spring Data JPA repositories in DEFAULT mode.
+2026-01-30T01:12:45.972+01:00  INFO 16764 --- [main] .s.d.r.c.RepositoryConfigurationDelegate : Finished Spring Data repository scanning in 57 ms. Found 1 JPA repository interfaces.
+2026-01-30T01:12:46.622+01:00  INFO 16764 --- [main] o.s.b.w.embedded.tomcat.TomcatWebServer  : Tomcat initialized with port(s): 8080 (http)
+2026-01-30T01:12:46.639+01:00  INFO 16764 --- [main] o.apache.catalina.core.StandardService   : Starting service [Tomcat]
+2026-01-30T01:12:46.640+01:00  INFO 16764 --- [main] o.apache.catalina.core.StandardEngine    : Starting Servlet engine: [Apache Tomcat/10.1.15]
+2026-01-30T01:12:46.745+01:00  INFO 16764 --- [main] o.a.c.c.C.[Tomcat].[localhost].[/]       : Initializing Spring embedded WebApplicationContext
+2026-01-30T01:12:46.746+01:00  INFO 16764 --- [main] w.s.c.ServletWebServerApplicationContext : Root WebApplicationContext: initialization completed in 1998 ms
+2026-01-30T01:12:46.861+01:00  INFO 16764 --- [main] com.zaxxer.hikari.HikariDataSource       : HikariPool-1 - Starting...
+2026-01-30T01:12:47.113+01:00  INFO 16764 --- [main] com.zaxxer.hikari.pool.HikariPool        : HikariPool-1 - Added connection conn0: url=jdbc:h2:mem:shortener user=SA
+2026-01-30T01:12:47.115+01:00  INFO 16764 --- [main] com.zaxxer.hikari.HikariDataSource       : HikariPool-1 - Start completed.
+2026-01-30T01:12:47.134+01:00  INFO 16764 --- [main] o.s.b.a.h2.H2ConsoleAutoConfiguration    : H2 console available at '/h2-console'. Database available at 'jdbc:h2:mem:shortener'
+2026-01-30T01:12:47.293+01:00  INFO 16764 --- [main] o.hibernate.jpa.internal.util.LogHelper  : HHH000204: Processing PersistenceUnitInfo [name: default]
+2026-01-30T01:12:47.377+01:00  INFO 16764 --- [main] org.hibernate.Version                    : HHH000412: Hibernate ORM core version 6.2.13.Final
+2026-01-30T01:12:47.381+01:00  INFO 16764 --- [main] org.hibernate.cfg.Environment            : HHH000406: Using bytecode reflection optimizer
+2026-01-30T01:12:47.819+01:00  INFO 16764 --- [main] o.s.o.j.p.SpringPersistenceUnitInfo      : No LoadTimeWeaver setup: ignoring JPA class transformer
+2026-01-30T01:12:47.883+01:00  WARN 16764 --- [main] org.hibernate.orm.deprecation            : HHH90000025: H2Dialect does not need to be specified explicitly using 'hibernate.dialect' (remove the property setting and it will be selected by default)
+2026-01-30T01:12:49.003+01:00  INFO 16764 --- [main] o.h.e.t.j.p.i.JtaPlatformInitiator       : HHH000489: No JTA platform available (set 'hibernate.transaction.jta.platform' to enable JTA platform integration)
+2026-01-30T01:12:49.085+01:00  INFO 16764 --- [main] j.LocalContainerEntityManagerFactoryBean : Initialized JPA EntityManagerFactory for persistence unit 'default'
+2026-01-30T01:12:49.446+01:00  INFO 16764 --- [main] o.s.d.j.r.query.QueryEnhancerFactory     : Hibernate is in classpath; If applicable, HQL parser will be used.
+2026-01-30T01:12:49.924+01:00  WARN 16764 --- [main] JpaBaseConfiguration$JpaWebConfiguration : spring.jpa.open-in-view is enabled by default. Therefore, database queries may be performed during view rendering. Explicitly configure spring.jpa.open-in-view to disable this warning
+2026-01-30T01:12:50.456+01:00  INFO 16764 --- [main] o.s.b.a.e.web.EndpointLinksResolver      : Exposing 3 endpoint(s) beneath base path '/actuator'
+2026-01-30T01:12:50.548+01:00  INFO 16764 --- [main] o.s.b.w.embedded.tomcat.TomcatWebServer  : Tomcat started on port(s): 8080 (http) with context path ''
+2026-01-30T01:12:50.570+01:00  INFO 16764 --- [main] c.a.urlshortner.UrlshortnerApplication   : Started UrlshortnerApplication in 6.378 seconds (process running for 6.815)
+2026-01-30T01:13:03.624+01:00  INFO 16764 --- [http-nio-8080-exec-1] o.a.c.c.C.[Tomcat].[localhost].[/]       : Initializing Spring DispatcherServlet 'dispatcherServlet'
+2026-01-30T01:13:03.624+01:00  INFO 16764 --- [http-nio-8080-exec-1] o.s.web.servlet.DispatcherServlet        : Initializing Servlet 'dispatcherServlet'
+2026-01-30T01:13:03.625+01:00  INFO 16764 --- [http-nio-8080-exec-1] o.s.web.servlet.DispatcherServlet        : Completed initialization in 1 ms
+2026-01-30T01:13:04.358+01:00  INFO 16764 --- [http-nio-8080-exec-4] o.springdoc.api.AbstractOpenApiResource  : Init duration for springdoc-openapi is: 328 ms
+2026-01-30T01:13:14.176+01:00  INFO 16764 --- [http-nio-8080-exec-5] c.a.u.service.UrlMappingService          : Created short URL: yzuJUb -> ftp://BWdnQlwdO`Z')+a]Zg4
+2026-01-30T01:13:14.184+01:00  INFO 16764 --- [http-nio-8080-exec-5] c.a.u.controller.UrlMappingController    : Created short URL for long URL ftp://BWdnQlwdO`Z')+a]Zg4 from IP 127.0.0.1
+2026-01-30T01:14:39.347+01:00  INFO 16764 --- [http-nio-8080-exec-7] c.a.u.controller.UrlRedirectController   : Redirected short URL yzuJUb to long URL ftp://BWdnQlwdO`Z')+a]Zg4 from IP 127.0.0.1

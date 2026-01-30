@@ -9,6 +9,8 @@ import io.swagger.v3.oas.annotations.media.Content;
 import io.swagger.v3.oas.annotations.media.Schema;
 import io.swagger.v3.oas.annotations.responses.ApiResponse;
 import io.swagger.v3.oas.annotations.responses.ApiResponses;
+import jakarta.servlet.http.HttpServletRequest;
+
 import org.springframework.http.HttpHeaders;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.MediaType;
@@ -17,6 +19,9 @@ import org.springframework.web.bind.annotation.GetMapping;
 import org.springframework.web.bind.annotation.PathVariable;
 import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RestController;
+
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
 
 import com.assessment.urlshortner.service.UrlMappingService;
 
@@ -35,6 +40,8 @@ public class UrlRedirectController {
     // Service layer dependency
     private final UrlMappingService urlService;
     private final Counter redirectCounter;
+    private static final Logger logger = LoggerFactory.getLogger(UrlRedirectController.class);
+
 
     // Constructor-based dependency injection
     public UrlRedirectController(UrlMappingService urlService, MeterRegistry registry) {
@@ -94,13 +101,17 @@ public class UrlRedirectController {
                     example = "samju1234",
                     required = true
             )
-            @PathVariable String code) {
+            @PathVariable String code, HttpServletRequest request) {
 
         // Resolve the short code to its original URL
         String longUrl = urlService.getLongUrl(code);
 
         // Increment the custom counter every time a redirect occurs
         redirectCounter.increment();
+
+        // Log the redirect
+        logger.info("Redirected short URL {} to long URL {} from IP {}",
+                code, longUrl, request.getRemoteAddr());
 
         // Return HTTP 302 Found with Location header
         return ResponseEntity
